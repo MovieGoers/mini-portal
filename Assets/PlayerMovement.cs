@@ -22,12 +22,12 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.A)){
-            transform.Translate(Vector2.left * playerSpeed * Time.deltaTime);
+            m_rb.velocity += new Vector2(-1 * playerSpeed * Time.deltaTime, 0);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Translate(Vector2.right * playerSpeed * Time.deltaTime);
+            m_rb.velocity += new Vector2(1 * playerSpeed * Time.deltaTime, 0);
         }
 
         if (Input.GetKey(KeyCode.Space) && m_isGrounded)
