@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class PortalGunScript : MonoBehaviour
 {
-    public LineRenderer m_lineRenderer;
-    public GameObject m_player;
-    public EdgeCollider2D m_edgeCollider;
+    public LineRenderer lineRenderer;
+    public GameObject player;
+    public EdgeCollider2D edgeCollider;
+    public GameObject placeholder;
 
     public float aimLineLength;
     public float aimLineStartLength;
+
+    public float betweenLength;
 
     Vector3 m_startPos;
     Vector3 m_endPos;
@@ -18,37 +21,34 @@ public class PortalGunScript : MonoBehaviour
 
     Vector2[] m_colliderpoints;
 
+    GameObject m_pointedGameObject;
+    bool m_pointedFound;
+
     // Start is called before the first frame update
     void Start()
     {
         aimLineLength = 10.0f;
         aimLineStartLength = 0.5f;
-        m_edgeCollider.enabled = true;
-        m_lineRenderer.enabled = true;
+        betweenLength = 0.1f;
+        edgeCollider.enabled = true;
+        lineRenderer.enabled = true;
+        m_pointedFound = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         DrawAimLine();
-        ContactFilter2D filter = new ContactFilter2D();
-        Collider2D[] results = new Collider2D[10];
-
-        int numColliders = m_edgeCollider.OverlapCollider(filter, results);
-        for (int i = 0; i < numColliders; i++)
-        {
-            GameObject collidedObject = results[i].gameObject;
-            Debug.Log(collidedObject.tag);
-        }
+        DrawPortalPlaceholder();
     }
 
     void DrawAimLine()
     {
-        m_colliderpoints = m_edgeCollider.points;
+        m_colliderpoints = edgeCollider.points;
 
         m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // 화면상 마우스 좌표 -> 게임상 좌표로 변환.
 
-        m_startPos = m_player.transform.position;
+        m_startPos = player.transform.position;
         m_startPos.z = 0;
 
         m_endPos = m_mousePos;
@@ -57,12 +57,57 @@ public class PortalGunScript : MonoBehaviour
         m_mouseDir = (m_endPos - m_startPos);
         m_mouseDir.Normalize(); // 캐릭터 To 마우스까지 방향의 단위벡터.
 
-        m_lineRenderer.SetPosition(0, m_mouseDir * aimLineStartLength + m_startPos); // 캐릭터 좌표에서 선 시작.
-        m_lineRenderer.SetPosition(1, m_mouseDir * aimLineLength + m_startPos);
+        lineRenderer.SetPosition(0, m_mouseDir * aimLineStartLength + m_startPos); // 캐릭터 좌표에서 선 시작.
+        lineRenderer.SetPosition(1, m_mouseDir * aimLineLength + m_startPos);
 
         m_colliderpoints[0] = m_mouseDir * aimLineStartLength + m_startPos; // Edge Collider 선 시작.
         m_colliderpoints[1] = m_mouseDir * aimLineLength + m_startPos; // Edge Collider 선 끝.
 
-        m_edgeCollider.points = m_colliderpoints; // Edge Collider Points 설정.
+        edgeCollider.points = m_colliderpoints; // Edge Collider Points 설정.
+    }
+
+    void DrawPortalPlaceholder()
+    {
+        ContactFilter2D filter = new ContactFilter2D();
+        Collider2D[] results = new Collider2D[10];
+
+        int numColliders = edgeCollider.OverlapCollider(filter, results);
+        for (int i = 0; i < numColliders; i++)
+        {
+            GameObject collidedObject = results[i].gameObject;
+            if (collidedObject.tag == "Ground")
+            {
+                m_pointedGameObject = collidedObject;
+                m_pointedFound = true;
+                break;
+            }
+        }
+
+        if (m_pointedFound)
+        {
+            /*Vector3 tempvec = m_pointedGameObject.transform.position - player.transform.position;
+            tempvec.Normalize();
+
+            placeholder.transform.position = tempvec * -1 * betweenLength + m_pointedGameObject.transform.position;*/
+            Calc_Intersection();
+        }
+
+        m_pointedFound = false;
+    }
+
+    void Calc_Intersection()
+    {
+        // 1 : player
+        // 2 : ground
+
+        float beta1, beta2;
+        beta1 = player.transform.position.y - (m_mouseDir.y / m_mouseDir.x) * player.transform.position.x;
+        beta2 = m_pointedGameObject.transform.position.y - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad) * m_pointedGameObject.transform.position.x;
+
+        float X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+        float Y = (m_mouseDir.y / m_mouseDir.x) * X + beta1;
+
+        placeholder.transform.position = new Vector3(X, Y, 0);
+        placeholder.transform.rotation = m_pointedGameObject.transform.rotation;
     }
 }
