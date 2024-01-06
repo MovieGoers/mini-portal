@@ -14,8 +14,6 @@ public class PortalGunScript : MonoBehaviour
     public float aimLineLength;
     public float aimLineStartLength;
 
-    public float betweenLength;
-
     Vector3 m_startPos;
     Vector3 m_endPos;
     Vector3 m_mousePos;
@@ -32,9 +30,8 @@ public class PortalGunScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        aimLineLength = 10.0f;
-        aimLineStartLength = 0.5f;
-        betweenLength = 0.3f;
+        aimLineLength = 30.0f;
+        aimLineStartLength = 0.0f;
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;
         m_pointedFound = false;
@@ -44,7 +41,6 @@ public class PortalGunScript : MonoBehaviour
     void Update()
     {
         DrawAimLine();
-        DrawPortalPlaceholder();
     }
 
     void DrawAimLine()
@@ -63,29 +59,19 @@ public class PortalGunScript : MonoBehaviour
         m_mouseDir.Normalize(); // 캐릭터 To 마우스까지 방향의 단위벡터.
 
         lineRenderer.SetPosition(0, m_mouseDir * aimLineStartLength + m_startPos); // 캐릭터 좌표에서 선 시작.
-        lineRenderer.SetPosition(1, m_mouseDir * aimLineLength + m_startPos);
+        lineRenderer.SetPosition(1, m_mousePos); // 마우스 좌표에서 선 끝.
 
         m_colliderpoints[0] = m_mouseDir * aimLineStartLength + m_startPos; // Edge Collider 선 시작.
         m_colliderpoints[1] = m_mouseDir * aimLineLength + m_startPos; // Edge Collider 선 끝.
 
         edgeCollider.points = m_colliderpoints; // Edge Collider Points 설정.
     }
-
-    void DrawPortalPlaceholder()
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        ContactFilter2D filter = new ContactFilter2D();
-        Collider2D[] results = new Collider2D[10];
-
-        int numColliders = edgeCollider.OverlapCollider(filter, results);
-        for (int i = 0; i < numColliders; i++)
+        if (collision.gameObject.tag == "Portalable")
         {
-            GameObject collidedObject = results[i].gameObject;
-            if (collidedObject.tag == "Ground")
-            {
-                m_pointedGameObject = collidedObject;
-                m_pointedFound = true;
-                break;
-            }
+            m_pointedGameObject = collision.gameObject;
+            m_pointedFound = true;
         }
 
         if (m_pointedFound)
@@ -99,20 +85,17 @@ public class PortalGunScript : MonoBehaviour
 
             portal_X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
             portal_Y = (m_mouseDir.y / m_mouseDir.x) * portal_X + beta1;
-
-            portal_XYZ = new Vector3(portal_X, portal_Y, 0);
-            portal_XYZ -= m_mouseDir * betweenLength;
         }
 
         if (m_pointedFound && Input.GetKey(KeyCode.Mouse0))
         {
-            bluePortal.transform.position = portal_XYZ;
+            bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
             bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
         }
 
         if (m_pointedFound && Input.GetKey(KeyCode.Mouse1))
         {
-            orangePortal.transform.position = portal_XYZ;
+            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
             orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
         }
 
