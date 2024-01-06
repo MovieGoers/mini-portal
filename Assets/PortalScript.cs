@@ -23,15 +23,16 @@ public class PortalScript : MonoBehaviour
     void Start()
     {
         m_EnteredPortal = false;
-
-        m_orangePortalRotation = orangePortal.transform.rotation.eulerAngles.z;
-        m_bluePortalRotation = bluePortal.transform.rotation.eulerAngles.z;
     }
 
     // Update is called once per frame
     void Update()
     {
         m_playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
+
+        // 포탈 각도 업데이트.
+        m_orangePortalRotation = orangePortal.transform.rotation.eulerAngles.z;
+        m_bluePortalRotation = bluePortal.transform.rotation.eulerAngles.z;
 
         m_PlayerVelocityAngle = Mathf.Atan2(m_playerVelocity.y, m_playerVelocity.x) * Mathf.Rad2Deg; //  포탈을 들어갈 때 각도 Degree
         m_newPlayerVelocityAngle = 360 - m_PlayerVelocityAngle + m_orangePortalRotation + m_bluePortalRotation; // 포탈을 나갈때 각도 Degree
@@ -49,6 +50,8 @@ public class PortalScript : MonoBehaviour
             m_EnteredPortal = true;
             player.transform.position = bluePortal.transform.position; //  오렌지 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
+
+            player.GetComponent<BoxCollider2D>().isTrigger = true; // 잠시동안 플레이어 collider 트리거로 변환.
         }
 
         if (isTouchingBlue && !m_EnteredPortal) // 블루 포탈에 닿은 경우 + 이미 들어간 적이 없는 경우.
@@ -56,10 +59,13 @@ public class PortalScript : MonoBehaviour
             m_EnteredPortal = true;
             player.transform.position = orangePortal.transform.position; //  블루 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
+
+            player.GetComponent<BoxCollider2D>().isTrigger = true; // 잠시동안 플레이어 collider 트리거로 변환.
         }
 
         if (!isTouchingBlue && !isTouchingOrange)
         {
+            player.GetComponent<BoxCollider2D>().isTrigger = false;
             m_EnteredPortal = false;
         }
     }

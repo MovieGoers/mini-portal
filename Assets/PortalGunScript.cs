@@ -8,6 +8,8 @@ public class PortalGunScript : MonoBehaviour
     public GameObject player;
     public EdgeCollider2D edgeCollider;
     public GameObject placeholder;
+    public GameObject bluePortal;
+    public GameObject orangePortal;
 
     public float aimLineLength;
     public float aimLineStartLength;
@@ -24,12 +26,15 @@ public class PortalGunScript : MonoBehaviour
     GameObject m_pointedGameObject;
     bool m_pointedFound;
 
+    float portal_X, portal_Y;
+    Vector3 portal_XYZ;
+
     // Start is called before the first frame update
     void Start()
     {
         aimLineLength = 10.0f;
         aimLineStartLength = 0.5f;
-        betweenLength = 0.1f;
+        betweenLength = 0.3f;
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;
         m_pointedFound = false;
@@ -85,29 +90,32 @@ public class PortalGunScript : MonoBehaviour
 
         if (m_pointedFound)
         {
-            /*Vector3 tempvec = m_pointedGameObject.transform.position - player.transform.position;
-            tempvec.Normalize();
+            // 1 : player
+            // 2 : ground
 
-            placeholder.transform.position = tempvec * -1 * betweenLength + m_pointedGameObject.transform.position;*/
-            Calc_Intersection();
+            float beta1, beta2;
+            beta1 = player.transform.position.y - (m_mouseDir.y / m_mouseDir.x) * player.transform.position.x;
+            beta2 = m_pointedGameObject.transform.position.y - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad) * m_pointedGameObject.transform.position.x;
+
+            portal_X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
+            portal_Y = (m_mouseDir.y / m_mouseDir.x) * portal_X + beta1;
+
+            portal_XYZ = new Vector3(portal_X, portal_Y, 0);
+            portal_XYZ -= m_mouseDir * betweenLength;
+        }
+
+        if (m_pointedFound && Input.GetKey(KeyCode.Mouse0))
+        {
+            bluePortal.transform.position = portal_XYZ;
+            bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+        }
+
+        if (m_pointedFound && Input.GetKey(KeyCode.Mouse1))
+        {
+            orangePortal.transform.position = portal_XYZ;
+            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
         }
 
         m_pointedFound = false;
-    }
-
-    void Calc_Intersection()
-    {
-        // 1 : player
-        // 2 : ground
-
-        float beta1, beta2;
-        beta1 = player.transform.position.y - (m_mouseDir.y / m_mouseDir.x) * player.transform.position.x;
-        beta2 = m_pointedGameObject.transform.position.y - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad) * m_pointedGameObject.transform.position.x;
-
-        float X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
-        float Y = (m_mouseDir.y / m_mouseDir.x) * X + beta1;
-
-        placeholder.transform.position = new Vector3(X, Y, 0);
-        placeholder.transform.rotation = m_pointedGameObject.transform.rotation;
     }
 }
