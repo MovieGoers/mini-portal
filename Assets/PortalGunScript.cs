@@ -7,7 +7,6 @@ public class PortalGunScript : MonoBehaviour
     public LineRenderer lineRenderer;
     public GameObject player;
     public EdgeCollider2D edgeCollider;
-    public GameObject placeholder;
     public GameObject bluePortal;
     public GameObject orangePortal;
 
@@ -22,7 +21,6 @@ public class PortalGunScript : MonoBehaviour
     Vector2[] m_colliderpoints;
 
     GameObject m_pointedGameObject;
-    bool m_pointedFound;
 
     float portal_X, portal_Y;
     Vector3 portal_XYZ;
@@ -30,17 +28,28 @@ public class PortalGunScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        aimLineLength = 30.0f;
-        aimLineStartLength = 0.0f;
+        aimLineLength = 30.0f; // Aim Line의 길이.
+        aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;
-        m_pointedFound = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         DrawAimLine();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+            bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+        }
     }
 
     void DrawAimLine()
@@ -71,13 +80,6 @@ public class PortalGunScript : MonoBehaviour
         if (collision.gameObject.tag == "Portalable")
         {
             m_pointedGameObject = collision.gameObject;
-            m_pointedFound = true;
-        }
-
-        if (m_pointedFound)
-        {
-            // 1 : player
-            // 2 : ground
 
             float beta1, beta2;
             beta1 = player.transform.position.y - (m_mouseDir.y / m_mouseDir.x) * player.transform.position.x;
@@ -86,19 +88,5 @@ public class PortalGunScript : MonoBehaviour
             portal_X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
             portal_Y = (m_mouseDir.y / m_mouseDir.x) * portal_X + beta1;
         }
-
-        if (m_pointedFound && Input.GetKey(KeyCode.Mouse0))
-        {
-            bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
-            bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
-        }
-
-        if (m_pointedFound && Input.GetKey(KeyCode.Mouse1))
-        {
-            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
-            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
-        }
-
-        m_pointedFound = false;
     }
 }
