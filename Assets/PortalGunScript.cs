@@ -18,12 +18,17 @@ public class PortalGunScript : MonoBehaviour
     Vector3 m_mousePos;
     Vector3 m_mouseDir;
 
+    Vector3 m_tempVector;
+    Quaternion m_tempQuaternion;
+
     Vector2[] m_colliderpoints;
 
     GameObject m_pointedGameObject;
 
     float portal_X, portal_Y;
     Vector3 portal_XYZ;
+
+    int m_lastPortalMade; // 마지막으로 생성된 포탈 표시. 0은 없음, 1은 블루 포탈, 2은 오렌지 포탈.
 
     // Start is called before the first frame update
     void Start()
@@ -32,24 +37,15 @@ public class PortalGunScript : MonoBehaviour
         aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;
+
+        m_lastPortalMade = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
         DrawAimLine();
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
-            bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
-            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
-        }
+        HandlePortalCreation();
     }
 
     void DrawAimLine()
@@ -75,6 +71,7 @@ public class PortalGunScript : MonoBehaviour
 
         edgeCollider.points = m_colliderpoints; // Edge Collider Points 설정.
     }
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Portalable")
@@ -88,5 +85,55 @@ public class PortalGunScript : MonoBehaviour
             portal_X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
             portal_Y = (m_mouseDir.y / m_mouseDir.x) * portal_X + beta1;
         }
+    }
+
+    private void HandlePortalCreation()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            m_tempVector = bluePortal.transform.position; // 이전 포탈 위치 저장.
+            m_tempQuaternion = bluePortal.transform.rotation; // 이전 포탈 각도 저장.
+
+            bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+            bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+
+            m_lastPortalMade = 1; //  블루 포탈 생성됨 표시.
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            m_tempVector = orangePortal.transform.position; // 이전 포탈 위치 저장.
+            m_tempQuaternion = orangePortal.transform.rotation; // 이전 포탈 각도 저장.
+
+            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+
+            m_lastPortalMade = 2; //  오렌지 포탈 생성됨 표시.
+        }
+
+        // 두 포탈이 겹치는 경우,
+        Bounds blueBound = bluePortal.GetComponent<BoxCollider2D>().bounds;
+        Bounds orangeBound = orangePortal.GetComponent<BoxCollider2D>().bounds;
+
+        if (blueBound.Intersects(orangeBound))
+        {
+            // 마지막으로 쏜 포탈이 블루 포탈인 경우,
+            if (m_lastPortalMade == 1)
+            {
+                bluePortal.transform.position = m_tempVector;
+                bluePortal.transform.rotation = m_tempQuaternion;
+                m_lastPortalMade = 0;
+            }
+
+            // 마지막으로 쏜 포탈이 오렌지 포탈인 경우,
+            if (m_lastPortalMade == 2)
+            {
+                orangePortal.transform.position = m_tempVector;
+                orangePortal.transform.rotation = m_tempQuaternion;
+                m_lastPortalMade = 0;
+            }
+        }
+
+
     }
 }
