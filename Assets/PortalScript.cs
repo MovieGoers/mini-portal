@@ -8,6 +8,8 @@ public class PortalScript : MonoBehaviour
     public GameObject orangePortal;
     public GameObject bluePortal;
 
+    public float portalPlayerDistance;
+
     Vector3 m_playerVelocity; // 플레이어가 포탈에 들어갈 때의 속도.
 
     bool m_EnteredPortal; // 플레이어가 포탈에 들어간 경우를 확인하는 Boolean.
@@ -23,6 +25,7 @@ public class PortalScript : MonoBehaviour
     void Start()
     {
         m_EnteredPortal = false;
+        portalPlayerDistance = 0.5f;
     }
 
     // Update is called once per frame
@@ -48,24 +51,19 @@ public class PortalScript : MonoBehaviour
         if (isTouchingOrange && !m_EnteredPortal) // 오렌지 포탈에 닿은 경우 + 이미 들어간 적이 없는 경우.
         {
             m_EnteredPortal = true;
-            player.transform.position = bluePortal.transform.position; //  오렌지 포탈로 위치 변환.
+            player.transform.position = bluePortal.transform.position + desiredDirection.normalized * portalPlayerDistance; //  오렌지 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
-
-            player.GetComponent<BoxCollider2D>().isTrigger = true; // 잠시동안 플레이어 collider 트리거로 변환.
         }
 
         if (isTouchingBlue && !m_EnteredPortal) // 블루 포탈에 닿은 경우 + 이미 들어간 적이 없는 경우.
         {
             m_EnteredPortal = true;
-            player.transform.position = orangePortal.transform.position; //  블루 포탈로 위치 변환.
+            player.transform.position = orangePortal.transform.position + desiredDirection.normalized * portalPlayerDistance; //  블루 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
-
-            player.GetComponent<BoxCollider2D>().isTrigger = true; // 잠시동안 플레이어 collider 트리거로 변환.
         }
 
         if (!isTouchingBlue && !isTouchingOrange)
         {
-            player.GetComponent<BoxCollider2D>().isTrigger = false;
             m_EnteredPortal = false;
         }
     }
