@@ -8,26 +8,33 @@ public class PlayerMovement : MonoBehaviour
 
     bool m_isGrounded;
 
-    public float playerSpeed = 3.0f;
-    public float playerJumpForce = 10.0f;
+    public float playerSpeed;
+    public float playerJumpForce;
 
     // Start is called before the first frame update
     void Start()
     {
         m_rb = GetComponent<Rigidbody2D>();
         m_isGrounded = true;
+        playerJumpForce = 10.0f;
+        playerSpeed = 3.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.A)){
-            m_rb.velocity += new Vector2(-1 * playerSpeed * Time.deltaTime, 0);
+        if (Input.GetKey(KeyCode.A) && m_isGrounded)
+        {
+            Vector3 newVelocity= new Vector3(-1 * playerSpeed, m_rb.velocity.y, 0);
+            m_rb.velocity = newVelocity;
+            //transform.Translate(new Vector3(-1 * playerSpeed * Time.deltaTime, 0, 0));
         }
 
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && m_isGrounded)
         {
-            m_rb.velocity += new Vector2(1 * playerSpeed * Time.deltaTime, 0);
+            Vector3 newVelocity = new Vector3(1 * playerSpeed, m_rb.velocity.y, 0);
+            m_rb.velocity = newVelocity;
+            //transform.Translate(new Vector3(1 * playerSpeed * Time.deltaTime, 0, 0));
         }
 
         if (Input.GetKey(KeyCode.Space) && m_isGrounded)
@@ -36,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -44,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void OnCollisionExit2D(Collision2D collision)
+    void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {

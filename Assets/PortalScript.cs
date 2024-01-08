@@ -45,8 +45,8 @@ public class PortalScript : MonoBehaviour
 
 
         // 플레이어가 포탈에 닿았는가 확인.
-        isTouchingOrange = Physics2D.IsTouching(player.GetComponent<BoxCollider2D>(), orangePortal.GetComponent<BoxCollider2D>());
-        isTouchingBlue = Physics2D.IsTouching(player.GetComponent<BoxCollider2D>(), bluePortal.GetComponent<BoxCollider2D>());
+        isTouchingOrange = Physics2D.IsTouching(player.GetComponent<CapsuleCollider2D>(), orangePortal.GetComponent<BoxCollider2D>());
+        isTouchingBlue = Physics2D.IsTouching(player.GetComponent<CapsuleCollider2D>(), bluePortal.GetComponent<BoxCollider2D>());
 
         if (isTouchingOrange && !m_EnteredPortal) // 오렌지 포탈에 닿은 경우 + 이미 들어간 적이 없는 경우.
         {
