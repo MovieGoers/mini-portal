@@ -10,6 +10,8 @@ public class PortalScript : MonoBehaviour
 
     public float portalPlayerDistance;
 
+    AudioSource m_audioSource;
+
     Vector3 m_playerVelocity; // 플레이어가 포탈에 들어갈 때의 속도.
 
     bool m_EnteredPortal; // 플레이어가 포탈에 들어간 경우를 확인하는 Boolean.
@@ -26,6 +28,7 @@ public class PortalScript : MonoBehaviour
     {
         m_EnteredPortal = false;
         portalPlayerDistance = 0.5f;
+        m_audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -53,6 +56,8 @@ public class PortalScript : MonoBehaviour
             m_EnteredPortal = true;
             player.transform.position = bluePortal.transform.position + desiredDirection.normalized * portalPlayerDistance; //  오렌지 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
+
+            m_audioSource.Play();
         }
 
         if (isTouchingBlue && !m_EnteredPortal) // 블루 포탈에 닿은 경우 + 이미 들어간 적이 없는 경우.
@@ -60,6 +65,8 @@ public class PortalScript : MonoBehaviour
             m_EnteredPortal = true;
             player.transform.position = orangePortal.transform.position + desiredDirection.normalized * portalPlayerDistance; //  블루 포탈로 위치 변환.
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
+
+            m_audioSource.Play();
         }
 
         if (!isTouchingBlue && !isTouchingOrange)
