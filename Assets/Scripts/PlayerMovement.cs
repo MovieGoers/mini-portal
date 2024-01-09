@@ -7,9 +7,12 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D m_rb;
 
     bool m_isGrounded;
+    bool m_isFacingRight;
 
     public float playerSpeed;
     public float playerJumpForce;
+
+    public Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -18,11 +21,26 @@ public class PlayerMovement : MonoBehaviour
         m_isGrounded = true;
         playerJumpForce = 200.0f;
         playerSpeed = 3.0f;
+        m_isFacingRight = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        animator.SetFloat("Speed", Mathf.Abs(m_rb.velocity.x));
+        animator.SetBool("IsGrounded", m_isGrounded);
+
+        if (m_rb.velocity.x < 0 && m_isFacingRight)
+        {
+            gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            m_isFacingRight = false;
+        }
+        if (m_rb.velocity.x > 0 && !m_isFacingRight)
+        {
+            gameObject.GetComponent<SpriteRenderer>().flipX = false;
+            m_isFacingRight = true;
+        }
+
         if (Input.GetKey(KeyCode.A) && m_isGrounded)
         {
             Vector3 newVelocity= new Vector3(-1 * playerSpeed, m_rb.velocity.y, 0);
