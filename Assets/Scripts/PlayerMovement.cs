@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
                 m_rb.velocity = newVelocity;
             }
             else
-            {
+            { 
                 if (m_rb.velocity.x < 0)
                 {
                     Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio, m_rb.velocity.y, 0);
