@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     {
         m_rb = GetComponent<Rigidbody2D>();
         m_isGrounded = true;
-        playerJumpForce = 10.0f;
+        playerJumpForce = 200.0f;
         playerSpeed = 3.0f;
     }
 
@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
             //transform.Translate(new Vector3(1 * playerSpeed * Time.deltaTime, 0, 0));
         }
 
-        if (Input.GetKey(KeyCode.Space) && m_isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && m_isGrounded)
         {
             m_rb.AddForce(transform.up * playerJumpForce);
         }
