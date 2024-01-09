@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D m_rb;
+    AudioSource m_audioSource;
 
     bool m_isGrounded;
     bool m_isFacingRight;
@@ -18,10 +19,13 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         m_rb = GetComponent<Rigidbody2D>();
+        m_audioSource = GetComponent<AudioSource>();
+
         m_isGrounded = true;
         playerJumpForce = 200.0f;
         playerSpeed = 3.0f;
         m_isFacingRight = true;
+
     }
 
     // Update is called once per frame
@@ -58,6 +62,16 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && m_isGrounded)
         {
             m_rb.AddForce(transform.up * playerJumpForce);
+        }
+
+        if (m_rb.velocity.x != 0 && m_isGrounded)
+        {
+            if (!m_audioSource.isPlaying)
+                m_audioSource.Play();
+        }
+        else
+        {
+            m_audioSource.Stop();
         }
     }
 
