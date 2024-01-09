@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float playerSpeed;
     public float playerJumpForce;
+    public float playerFloatingRatio;
 
     public Animator animator;
 
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
         playerJumpForce = 200.0f;
         playerSpeed = 3.0f;
         m_isFacingRight = true;
+        playerFloatingRatio = 0.005f;
 
     }
 
@@ -45,18 +47,36 @@ public class PlayerMovement : MonoBehaviour
             m_isFacingRight = true;
         }
 
-        if (Input.GetKey(KeyCode.A) && m_isGrounded)
+        if (Input.GetKey(KeyCode.A))
         {
-            Vector3 newVelocity= new Vector3(-1 * playerSpeed, m_rb.velocity.y, 0);
-            m_rb.velocity = newVelocity;
-            //transform.Translate(new Vector3(-1 * playerSpeed * Time.deltaTime, 0, 0));
+            if (m_isGrounded) {
+                Vector3 newVelocity = new Vector3(-1 * playerSpeed, m_rb.velocity.y, 0);
+                m_rb.velocity = newVelocity;
+            }
+            else
+            {
+                if (m_rb.velocity.x > 0) {
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio, m_rb.velocity.y, 0);
+                    m_rb.velocity = newVelocity;
+                }
+            }
         }
 
-        if (Input.GetKey(KeyCode.D) && m_isGrounded)
+        if (Input.GetKey(KeyCode.D))
         {
-            Vector3 newVelocity = new Vector3(1 * playerSpeed, m_rb.velocity.y, 0);
-            m_rb.velocity = newVelocity;
-            //transform.Translate(new Vector3(1 * playerSpeed * Time.deltaTime, 0, 0));
+            if (m_isGrounded)
+            {
+                Vector3 newVelocity = new Vector3(1 * playerSpeed, m_rb.velocity.y, 0);
+                m_rb.velocity = newVelocity;
+            }
+            else
+            {
+                if (m_rb.velocity.x < 0)
+                {
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio, m_rb.velocity.y, 0);
+                    m_rb.velocity = newVelocity;
+                }
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && m_isGrounded)
