@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
         playerJumpForce = 200.0f;
         playerSpeed = 3.0f;
         m_isFacingRight = true;
-        playerFloatingRatio = 0.005f;
+        playerFloatingRatio = 0.01f;
 
     }
 
