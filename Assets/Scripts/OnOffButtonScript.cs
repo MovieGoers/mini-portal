@@ -12,12 +12,20 @@ public class OnOffButtonScript : MonoBehaviour
     public Sprite OffSprite;
     public GameObject Blocked;
 
+    public float RotationSpeed;
+
     bool m_isOn;
 
     private void Start()
     {
         m_isOn = true;
+        RotationSpeed = 100f;
         m_audioSource = GetComponent<AudioSource>();
+    }
+
+    private void Update()
+    {
+        transform.Rotate(Vector3.forward * -1 *RotationSpeed * Time.deltaTime);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

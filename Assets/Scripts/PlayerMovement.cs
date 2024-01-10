@@ -24,9 +24,9 @@ public class PlayerMovement : MonoBehaviour
 
         m_isGrounded = true;
         playerJumpForce = 200.0f;
-        playerSpeed = 3.0f;
+        playerSpeed = 200.0f;
         m_isFacingRight = true;
-        playerFloatingRatio = 0.01f;
+        playerFloatingRatio = 0.045f;
 
     }
 
@@ -50,13 +50,13 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             if (m_isGrounded) {
-                Vector3 newVelocity = new Vector3(-1 * playerSpeed, m_rb.velocity.y, 0);
+                Vector3 newVelocity = new Vector3(-1 * playerSpeed * Time.deltaTime, m_rb.velocity.y, 0);
                 m_rb.velocity = newVelocity;
             }
             else
             {
                 if (m_rb.velocity.x > 0) {
-                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio, m_rb.velocity.y, 0);
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
             }
@@ -66,14 +66,14 @@ public class PlayerMovement : MonoBehaviour
         {
             if (m_isGrounded)
             {
-                Vector3 newVelocity = new Vector3(1 * playerSpeed, m_rb.velocity.y, 0);
+                Vector3 newVelocity = new Vector3(1 * playerSpeed * Time.deltaTime, m_rb.velocity.y, 0);
                 m_rb.velocity = newVelocity;
             }
             else
             { 
                 if (m_rb.velocity.x < 0)
                 {
-                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio, m_rb.velocity.y, 0);
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
             }
