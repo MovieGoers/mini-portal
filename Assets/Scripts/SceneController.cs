@@ -5,6 +5,11 @@ public class SceneController : MonoBehaviour
 {
     public static SceneController instance;
 
+    public int frameCap;
+    void Start() {
+        frameCap = 60;
+        Application.targetFrameRate = frameCap; 
+    }
     private void Awake()
     {
         if(instance == null) 
