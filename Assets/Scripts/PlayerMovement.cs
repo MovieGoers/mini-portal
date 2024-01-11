@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public float playerFloatingRatio;
 
     public Animator animator;
+    public SpriteRenderer spriteSrc;
 
     // Start is called before the first frame update
     void Start()
@@ -26,8 +27,7 @@ public class PlayerMovement : MonoBehaviour
         playerJumpForce = 200.0f;
         playerSpeed = 200.0f;
         m_isFacingRight = true;
-        playerFloatingRatio = 0.045f;
-
+        playerFloatingRatio = 0.05f;
     }
 
     // Update is called once per frame
@@ -59,6 +59,11 @@ public class PlayerMovement : MonoBehaviour
                     Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
+                else
+                {
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * 0.2f * Time.deltaTime, m_rb.velocity.y, 0);
+                    m_rb.velocity = newVelocity;
+                }
             }
         }
 
@@ -74,6 +79,11 @@ public class PlayerMovement : MonoBehaviour
                 if (m_rb.velocity.x < 0)
                 {
                     Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
+                    m_rb.velocity = newVelocity;
+                }
+                else
+                {
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * 0.2f * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
             }
