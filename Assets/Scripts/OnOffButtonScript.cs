@@ -14,11 +14,19 @@ public class OnOffButtonScript : MonoBehaviour
 
     public float RotationSpeed;
 
-    bool m_isOn;
+    public bool m_isOn;
 
     private void Start()
     {
-        m_isOn = true;
+        if (m_isOn)
+        {
+            spriteRenderer.sprite = OnSprite;
+            Blocked.SetActive(true);
+        }
+        else {
+            spriteRenderer.sprite = OffSprite;
+            Blocked.SetActive(false);
+        }
         RotationSpeed = 100f;
         m_audioSource = GetComponent<AudioSource>();
     }
