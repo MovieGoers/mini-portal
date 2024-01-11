@@ -58,6 +58,8 @@ public class PortalScript : MonoBehaviour
             player.transform.position = PortalSpawnPoint.transform.position;
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
 
+            PlayerMovement.isPortalJump = true;
+
             m_audioSource.Play();
         }
 
@@ -67,6 +69,8 @@ public class PortalScript : MonoBehaviour
             m_EnteredPortal = true;
             player.transform.position = PortalSpawnPoint.transform.position;
             player.GetComponent<Rigidbody2D>().velocity = desiredDirection.normalized * m_playerVelocity.magnitude; // 포탈을 나갈때 속도의 방향 변환.
+
+            PlayerMovement.isPortalJump = true;
 
             m_audioSource.Play();
         }

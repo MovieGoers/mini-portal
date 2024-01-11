@@ -10,6 +10,9 @@ public class PlayerMovement : MonoBehaviour
     bool m_isGrounded;
     bool m_isFacingRight;
 
+    bool m_isPlayerJump;
+    public static bool isPortalJump;
+
     public float playerSpeed;
     public float playerJumpForce;
     public float playerFloatingRatio;
@@ -28,6 +31,9 @@ public class PlayerMovement : MonoBehaviour
         playerSpeed = 200.0f;
         m_isFacingRight = true;
         playerFloatingRatio = 0.05f;
+
+        m_isPlayerJump = false;
+        isPortalJump = false;
     }
 
     // Update is called once per frame
@@ -55,13 +61,14 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                if (m_rb.velocity.x > 0) {
+                if (m_rb.velocity.x > 0)
+                {
                     Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
-                else
+                else if (isPortalJump) // 정방향으로 가는 방향이지만 포탈 점프일 경우에만 속도 제어.
                 {
-                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * 0.2f * Time.deltaTime, m_rb.velocity.y, 0);
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x - playerSpeed * playerFloatingRatio * 0.15f * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
             }
@@ -81,17 +88,18 @@ public class PlayerMovement : MonoBehaviour
                     Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
-                else
+                else if(isPortalJump) // 정방향으로 가는 방향이지만 포탈 점프일 경우에만 속도 제어.
                 {
-                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * 0.2f * Time.deltaTime, m_rb.velocity.y, 0);
+                    Vector3 newVelocity = new Vector3(m_rb.velocity.x + playerSpeed * playerFloatingRatio * 0.15f * Time.deltaTime, m_rb.velocity.y, 0);
                     m_rb.velocity = newVelocity;
                 }
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && m_isGrounded)
+        if ((Input.GetKeyDown(KeyCode.Space) || (Input.GetKeyDown(KeyCode.W))) && m_isGrounded)
         {
             m_rb.AddForce(transform.up * playerJumpForce);
+            m_isPlayerJump = true;
         }
 
         if (m_rb.velocity.x != 0 && m_isGrounded)
@@ -110,6 +118,8 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             m_isGrounded = true;
+            m_isPlayerJump = false;
+            isPortalJump = false;
         }
     }
 
