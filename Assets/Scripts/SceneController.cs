@@ -22,6 +22,13 @@ public class SceneController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetScene();
+        }
+    }
     public void LoadNextLevel()
     {
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1); // 빌드 index 상 다음 scene 로드.
@@ -35,5 +42,10 @@ public class SceneController : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
+    }
+
+    public void ResetScene()
+    {
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }
