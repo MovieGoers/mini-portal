@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
         playerJumpForce = 200.0f;
         playerSpeed = 200.0f;
         m_isFacingRight = true;
-        playerFloatingRatio = 0.05f;
+        playerFloatingRatio = 0.15f;
 
         m_isPlayerJump = false;
         isPortalJump = false;
