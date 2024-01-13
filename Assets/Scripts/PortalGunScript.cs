@@ -6,12 +6,13 @@ public class PortalGunScript : MonoBehaviour
 {
     public LineRenderer lineRenderer;
     public GameObject player;
-    public EdgeCollider2D edgeCollider;
     public GameObject bluePortal;
     public GameObject orangePortal;
 
     public float aimLineLength;
     public float aimLineStartLength;
+
+    public int PortalModes; // 1 : 블루 포탈만, 2 : 블루/오렌지 전부.
 
     Vector3 m_startPos;
     Vector3 m_endPos;
@@ -21,8 +22,6 @@ public class PortalGunScript : MonoBehaviour
     Vector3 m_tempVector;
     Quaternion m_tempQuaternion;
 
-    Vector2[] m_colliderpoints;
-
     GameObject m_pointedGameObject;
 
     float portal_X, portal_Y;
@@ -30,12 +29,13 @@ public class PortalGunScript : MonoBehaviour
 
     int m_lastPortalMade; // 마지막으로 생성된 포탈 표시. 0은 없음, 1은 블루 포탈, 2은 오렌지 포탈.
 
+    RaycastHit2D hit;
+
     // Start is called before the first frame update
     void Start()
     {
         aimLineLength = 30.0f; // Aim Line의 길이.
         aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
-        edgeCollider.enabled = true;
         lineRenderer.enabled = true;
 
         m_lastPortalMade = 0;
@@ -50,8 +50,6 @@ public class PortalGunScript : MonoBehaviour
 
     void DrawAimLine()
     {
-        m_colliderpoints = edgeCollider.points;
-
         m_mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition); // 화면상 마우스 좌표 -> 게임상 좌표로 변환.
 
         m_startPos = player.transform.position;
@@ -66,31 +64,31 @@ public class PortalGunScript : MonoBehaviour
         lineRenderer.SetPosition(0, m_mouseDir * aimLineStartLength + m_startPos); // 캐릭터 좌표에서 선 시작.
         lineRenderer.SetPosition(1, m_mousePos); // 마우스 좌표에서 선 끝.
 
-        m_colliderpoints[0] = m_mouseDir * aimLineStartLength + m_startPos; // Edge Collider 선 시작.
-        m_colliderpoints[1] = m_mouseDir * aimLineLength + m_startPos; // Edge Collider 선 끝.
+        hit = Physics2D.Raycast(m_mouseDir * aimLineStartLength + m_startPos, m_mouseDir, 300);
+        lineRenderer.SetPosition(1, hit.point); // 마우스 좌표에서 선 끝.
 
-        edgeCollider.points = m_colliderpoints; // Edge Collider Points 설정.
-    }
+        /*        if (hit = Physics2D.Raycast(m_mouseDir * aimLineStartLength + m_startPos, m_mouseDir, 800.0f))
+                {
+                    Debug.DrawRay(m_mouseDir * aimLineStartLength + m_startPos, m_startPos * 800.0f, new Color(0, 1, 0));
+                    if (hit.collider.tag == "Portalable")
+                    {
+                        Debug.Log("AMBATUKAM");
+                    }
+                }*/
 
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Portalable")
-        {
-            m_pointedGameObject = collision.gameObject;
 
-            float beta1, beta2;
-            beta1 = player.transform.position.y - (m_mouseDir.y / m_mouseDir.x) * player.transform.position.x;
-            beta2 = m_pointedGameObject.transform.position.y - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad) * m_pointedGameObject.transform.position.x;
-
-            portal_X = (beta2 - beta1) / ((m_mouseDir.y / m_mouseDir.x) - Mathf.Tan(m_pointedGameObject.transform.rotation.eulerAngles.z * Mathf.Deg2Rad));
-            portal_Y = (m_mouseDir.y / m_mouseDir.x) * portal_X + beta1;
-        }
     }
 
     private void HandlePortalCreation()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            if (hit.collider.tag == "Portalable")
+            {
+                m_pointedGameObject = hit.collider.gameObject;
+                portal_X = hit.point.x;
+                portal_Y = hit.point.y;
+            }
             m_tempVector = bluePortal.transform.position; // 이전 포탈 위치 저장.
             m_tempQuaternion = bluePortal.transform.rotation; // 이전 포탈 각도 저장.
 
@@ -102,13 +100,31 @@ public class PortalGunScript : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            m_tempVector = orangePortal.transform.position; // 이전 포탈 위치 저장.
-            m_tempQuaternion = orangePortal.transform.rotation; // 이전 포탈 각도 저장.
+            if (hit.collider.tag == "Portalable")
+            {
+                m_pointedGameObject = hit.collider.gameObject;
+                portal_X = hit.point.x;
+                portal_Y = hit.point.y;
+            }
+            if (PortalModes == 2) {
+                m_tempVector = orangePortal.transform.position; // 이전 포탈 위치 저장.
+                m_tempQuaternion = orangePortal.transform.rotation; // 이전 포탈 각도 저장.
 
-            orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
-            orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+                orangePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+                orangePortal.transform.rotation = m_pointedGameObject.transform.rotation;
 
-            m_lastPortalMade = 2; //  오렌지 포탈 생성됨 표시.
+                m_lastPortalMade = 2; //  오렌지 포탈 생성됨 표시.           
+            }
+            else
+            {
+                m_tempVector = bluePortal.transform.position; // 이전 포탈 위치 저장.
+                m_tempQuaternion = bluePortal.transform.rotation; // 이전 포탈 각도 저장.
+
+                bluePortal.transform.position = new Vector3(portal_X, portal_Y, 0);
+                bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
+
+                m_lastPortalMade = 1; //  블루 포탈 생성됨 표시.   
+            }
         }
 
         // 두 포탈이 겹치는 경우,
