@@ -38,6 +38,9 @@ public class PortalGunScript : MonoBehaviour
         aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
         lineRenderer.enabled = true;
 
+        portal_X = -10000.0f;
+        portal_Y = -10000.0f;
+
         m_lastPortalMade = 0;
     }
 
@@ -67,16 +70,16 @@ public class PortalGunScript : MonoBehaviour
         hit = Physics2D.Raycast(m_mouseDir * aimLineStartLength + m_startPos, m_mouseDir, 300);
         lineRenderer.SetPosition(1, hit.point); // 마우스 좌표에서 선 끝.
 
-        /*        if (hit = Physics2D.Raycast(m_mouseDir * aimLineStartLength + m_startPos, m_mouseDir, 800.0f))
-                {
-                    Debug.DrawRay(m_mouseDir * aimLineStartLength + m_startPos, m_startPos * 800.0f, new Color(0, 1, 0));
-                    if (hit.collider.tag == "Portalable")
-                    {
-                        Debug.Log("AMBATUKAM");
-                    }
-                }*/
-
-
+        lineRenderer.endColor = Color.blue;
+        if(PortalModes == 1)
+        {
+            lineRenderer.startColor = Color.blue;
+        }
+        else
+        {
+            lineRenderer.startColor = Color.red;
+        }
+        
     }
 
     private void HandlePortalCreation()
