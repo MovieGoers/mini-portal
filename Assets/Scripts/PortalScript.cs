@@ -16,6 +16,7 @@ public class PortalScript : MonoBehaviour
 
     bool m_EnteredPortal; // 플레이어가 포탈에 들어간 경우를 확인하는 Boolean.
     bool isTouchingOrange, isTouchingBlue; // 플레이어가 포탈에 닿은 경우를 확인하는 Boolean.
+    bool m_orangeExists, m_blueExists;
 
     float m_PlayerVelocityAngle; // 플레이어가 포탈에 들어갈 때의 속도의 각도 Degree
     float m_newPlayerVelocityAngle; // 플레이어가 포탈에 나갈 때의 속도의 각도 Degree

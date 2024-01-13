@@ -38,8 +38,8 @@ public class PortalGunScript : MonoBehaviour
         aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
         lineRenderer.enabled = true;
 
-        portal_X = -10000.0f;
-        portal_Y = -10000.0f;
+        portal_X = bluePortal.transform.position.x;
+        portal_Y = bluePortal.transform.position.y;
 
         m_lastPortalMade = 0;
     }
