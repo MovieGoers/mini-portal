@@ -35,7 +35,7 @@ public class PortalGunScript : MonoBehaviour
     void Start()
     {
         aimLineLength = 30.0f; // Aim Line의 길이.
-        aimLineStartLength = 0.5f; // Aim Line의 시작점과 플레이어간의 간격.
+        aimLineStartLength = 0.1f; // Aim Line의 시작점과 플레이어간의 간격.
         lineRenderer.enabled = true;
 
         portal_X = bluePortal.transform.position.x;
