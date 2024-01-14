@@ -79,7 +79,6 @@ public class PortalGunScript : MonoBehaviour
         {
             lineRenderer.startColor = Color.red;
         }
-        
     }
 
     private void HandlePortalCreation()
