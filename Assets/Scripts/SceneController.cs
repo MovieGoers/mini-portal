@@ -6,9 +6,10 @@ public class SceneController : MonoBehaviour
     public static SceneController instance;
 
     public int frameCap;
+
     void Start() {
         frameCap = 60;
-        Application.targetFrameRate = frameCap; 
+        Application.targetFrameRate = frameCap;
     }
     private void Awake()
     {
@@ -47,5 +48,15 @@ public class SceneController : MonoBehaviour
     public void ResetScene()
     {
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void PauseScene()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void ResumeScene()
+    {
+        Time.timeScale = 1;
     }
 }
