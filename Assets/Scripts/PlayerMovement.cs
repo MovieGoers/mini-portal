@@ -103,6 +103,16 @@ public class PlayerMovement : MonoBehaviour
             m_rb.velocity = new Vector2(m_rb.velocity.x, -1 * playerMaximumSpeed * Time.deltaTime);
         }
 
+        if (m_rb.velocity.x < -1 * playerMaximumSpeed * Time.deltaTime)
+        {
+            m_rb.velocity = new Vector2(m_rb.velocity.x, -1 * playerMaximumSpeed * Time.deltaTime);
+        }
+
+        if (m_rb.velocity.x > 1 * playerMaximumSpeed * Time.deltaTime)
+        {
+            m_rb.velocity = new Vector2(m_rb.velocity.x, 1 * playerMaximumSpeed * Time.deltaTime);
+        }
+
         if ((Input.GetKeyDown(KeyCode.Space) || (Input.GetKeyDown(KeyCode.W))) && m_isGrounded)
         {
             m_rb.AddForce(transform.up * playerJumpForce);
