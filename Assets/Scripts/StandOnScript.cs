@@ -16,8 +16,11 @@ public class StandOnScript : MonoBehaviour
 
     bool m_isPlayerin;
 
+    AudioSource m_audio;
+
     private void Start()
     {
+        m_audio = gameObject.GetComponent<AudioSource>();
         m_isPlayerin = false;
         if (m_isOn)
         {
@@ -52,6 +55,7 @@ public class StandOnScript : MonoBehaviour
                 Blocked.SetActive(true);
                 m_isOn = true;
             }
+            m_audio.Play();
         }
     }
 
@@ -71,6 +75,7 @@ public class StandOnScript : MonoBehaviour
                 spriteRenderer.sprite = OnSprite;
                 Blocked.SetActive(true);
             }
+            m_audio.Play();
         }
     }
 }

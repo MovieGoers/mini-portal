@@ -31,9 +31,13 @@ public class PortalGunScript : MonoBehaviour
 
     RaycastHit2D hit;
 
+    AudioSource m_shootingAudio;
+
     // Start is called before the first frame update
     void Start()
     {
+        m_shootingAudio = GetComponent<AudioSource>();
+
         aimLineLength = 30.0f; // Aim Line의 길이.
         aimLineStartLength = 0.1f; // Aim Line의 시작점과 플레이어간의 간격.
         lineRenderer.enabled = true;
@@ -98,6 +102,7 @@ public class PortalGunScript : MonoBehaviour
             bluePortal.transform.rotation = m_pointedGameObject.transform.rotation;
 
             m_lastPortalMade = 1; //  블루 포탈 생성됨 표시.
+            m_shootingAudio.Play();
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse1))
@@ -127,6 +132,7 @@ public class PortalGunScript : MonoBehaviour
 
                 m_lastPortalMade = 1; //  블루 포탈 생성됨 표시.   
             }
+            m_shootingAudio.Play();
         }
 
         // 두 포탈이 겹치는 경우,
